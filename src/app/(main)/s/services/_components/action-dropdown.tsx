@@ -6,12 +6,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Service } from '@prisma/client';
 import { MoreVertical } from 'lucide-react';
-import EditJobPost from './edit-job-post';
-import { JobPost } from '@prisma/client';
-import DeletePostDialog from './delete-post-dialog';
+import EditService from './edit-service';
+import DeleteService from './delete-service';
 
-export default function ActionDropdown({ post }: { post: JobPost }) {
+export default function ActionDropdown({ service }: { service: Service }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -22,8 +22,8 @@ export default function ActionDropdown({ post }: { post: JobPost }) {
       <DropdownMenuContent>
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <EditJobPost post={post} />
-        <DeletePostDialog postId={post.id} />
+        <EditService service={service} />
+        <DeleteService serviceId={service.id} />
       </DropdownMenuContent>
     </DropdownMenu>
   );

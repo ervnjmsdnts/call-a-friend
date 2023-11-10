@@ -14,8 +14,9 @@ import {
 import { Button } from './ui/button';
 import { UserRole } from '@prisma/client';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
+import { trpc } from '@/app/_trpc/client';
 
 const routes: {
   href: string;
@@ -53,6 +54,14 @@ function SidebarSheet({ userRole }: { userRole: UserRole }) {
   const [open, setOpen] = useState(false);
 
   const pathname = usePathname();
+  const router = useRouter();
+
+  const { mutate: logout } = trpc.auth.logout.useMutation({
+    onSuccess: () => {
+      router.replace('/');
+      setOpen(false);
+    },
+  });
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -84,7 +93,10 @@ function SidebarSheet({ userRole }: { userRole: UserRole }) {
                   </Link>
                 </Button>
               ))}
-            <Button className='flex justify-start gap-2' variant='ghost'>
+            <Button
+              onClick={() => logout()}
+              className='flex justify-start gap-2'
+              variant='ghost'>
               <LogOut />
               Log Out
             </Button>

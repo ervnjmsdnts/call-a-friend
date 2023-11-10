@@ -67,4 +67,14 @@ export const authRouter = router({
 
       return { updatedRole: user.role };
     }),
+
+  logout: privateProcedure.mutation(async () => {
+    const cookieStore = cookies();
+    const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
+
+    const { error } = await supabase.auth.signOut();
+
+    if (error)
+      throw new TRPCError({ code: 'BAD_REQUEST', message: error.message });
+  }),
 });
