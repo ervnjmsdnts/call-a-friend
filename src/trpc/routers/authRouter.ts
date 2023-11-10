@@ -1,8 +1,9 @@
 import { z } from 'zod';
 import { privateProcedure, publicProcedure, router } from '../trpc';
 import { db } from '@/db';
-import { supabaseRouter } from '@/lib/supabase';
 import { TRPCError } from '@trpc/server';
+import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
 
 export const authRouter = router({
   createAccount: publicProcedure
@@ -14,10 +15,11 @@ export const authRouter = router({
       }),
     )
     .mutation(async ({ input }) => {
+      const supabase = createRouteHandlerClient({ cookies });
       const {
         data: { user },
         error,
-      } = await supabaseRouter.auth.signUp({
+      } = await supabase.auth.signUp({
         email: input.email,
         password: input.password,
       });
@@ -43,7 +45,8 @@ export const authRouter = router({
       }),
     )
     .mutation(async ({ input }) => {
-      const { error } = await supabaseRouter.auth.signInWithPassword({
+      const supabase = createRouteHandlerClient({ cookies });
+      const { error } = await supabase.auth.signInWithPassword({
         email: input.email,
         password: input.password,
       });
