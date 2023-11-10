@@ -15,7 +15,8 @@ export const authRouter = router({
       }),
     )
     .mutation(async ({ input }) => {
-      const supabase = createRouteHandlerClient({ cookies });
+      const cookieStore = cookies();
+      const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
       const {
         data: { user },
         error,
@@ -45,7 +46,8 @@ export const authRouter = router({
       }),
     )
     .mutation(async ({ input }) => {
-      const supabase = createRouteHandlerClient({ cookies });
+      const cookieStore = cookies();
+      const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
       const { error } = await supabase.auth.signInWithPassword({
         email: input.email,
         password: input.password,

@@ -7,7 +7,8 @@ const t = initTRPC.create();
 const middleware = t.middleware;
 
 const isAuth = middleware(async (opts) => {
-  const supabase = createRouteHandlerClient({ cookies });
+  const cookieStore = cookies();
+  const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
   const {
     data: { session },
   } = await supabase.auth.getSession();
