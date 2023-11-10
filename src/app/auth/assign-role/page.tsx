@@ -1,13 +1,15 @@
 import { db } from '@/db';
-import { supabaseServer } from '@/lib/supabase';
 import { redirect } from 'next/navigation';
 import AssignRole from '../_components/assign-role';
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
 
 export default async function AssignRolePage() {
+  const supabase = createServerComponentClient({ cookies });
   const {
     data: { session },
     error,
-  } = await supabaseServer.auth.getSession();
+  } = await supabase.auth.getSession();
 
   if (!session || !session.user) {
     console.log({ session });
