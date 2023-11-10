@@ -1,14 +1,24 @@
-import { initTRPC } from '@trpc/server';
+import { supabaseRouter } from '@/lib/supabase';
+import { TRPCError, initTRPC } from '@trpc/server';
 
-/**
- * Initialization of tRPC backend
- * Should be done only once per backend!
- */
 const t = initTRPC.create();
 
-/**
- * Export reusable router and procedure helpers
- * that can be used throughout the router
- */
+const middleware = t.middleware;
+
+const isAuth = middleware(async (opts) => {
+  const {
+    data: { session },
+  } = await supabaseRouter.auth.getSession();
+
+  if (!session || !session.user) throw new TRPCError({ code: 'UNAUTHORIZED' });
+
+  const user = session.user;
+
+  if (!user || !user.id) throw new TRPCError({ code: 'UNAUTHORIZED' });
+
+  return opts.next({ ctx: { user: { id: user.id } } });
+});
+
 export const router = t.router;
 export const publicProcedure = t.procedure;
+export const privateProcedure = t.procedure.use(isAuth);

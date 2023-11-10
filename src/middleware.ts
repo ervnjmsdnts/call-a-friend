@@ -3,14 +3,8 @@ import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs';
 
 export async function middleware(req: NextRequest) {
   const res = NextResponse.next();
-  const supabase = createMiddlewareClient(
-    { req, res },
-    {
-      supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL ?? '',
-      supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_KEY ?? '',
-    },
-  );
-  await supabase.auth.getSession();
+  const supabase = createMiddlewareClient({ req, res });
+  const { data } = await supabase.auth.getSession();
   return res;
 }
 

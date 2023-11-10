@@ -24,7 +24,7 @@ export default function Login({ action }: { action: () => void }) {
 
   const { mutate: login, isLoading } = trpc.auth.login.useMutation({
     onSuccess: () => {
-      router.push('/');
+      router.push('/auth/assign-role');
     },
     onError: (error) => {
       toast({

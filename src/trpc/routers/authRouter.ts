@@ -1,7 +1,7 @@
 import { z } from 'zod';
-import { publicProcedure, router } from '../trpc';
-import { db } from '@/app/db';
-import { supabase } from '@/lib/supabase';
+import { privateProcedure, publicProcedure, router } from '../trpc';
+import { db } from '@/db';
+import { supabaseRouter } from '@/lib/supabase';
 import { TRPCError } from '@trpc/server';
 
 export const authRouter = router({
@@ -17,7 +17,7 @@ export const authRouter = router({
       const {
         data: { user },
         error,
-      } = await supabase.auth.signUp({
+      } = await supabaseRouter.auth.signUp({
         email: input.email,
         password: input.password,
       });
@@ -34,6 +34,7 @@ export const authRouter = router({
         data: { id: user.id, email: user.email, name: input.name },
       });
     }),
+
   login: publicProcedure
     .input(
       z.object({
@@ -42,12 +43,21 @@ export const authRouter = router({
       }),
     )
     .mutation(async ({ input }) => {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { error } = await supabaseRouter.auth.signInWithPassword({
         email: input.email,
         password: input.password,
       });
 
       if (error)
         throw new TRPCError({ code: 'NOT_FOUND', message: error.message });
+    }),
+
+  assignRole: privateProcedure
+    .input(z.object({ role: z.enum(['SERVICE', 'CLIENT']) }))
+    .mutation(async ({ ctx, input }) => {
+      await db.user.update({
+        where: { id: ctx.user.id },
+        data: { role: input.role },
+      });
     }),
 });
