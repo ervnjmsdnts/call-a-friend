@@ -1,13 +1,19 @@
+'use client';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { trpc } from '@/app/_trpc/client';
+import { Loader2 } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
+import { useToast } from '@/components/ui/use-toast';
 
 const schema = z
   .object({
-    name: z.string().min(1, 'Required field'),
-    email: z.string().email().min(1, 'Required field'),
+    name: z.string().min(1, 'Field is required'),
+    email: z.string().email().min(1, 'Field is required'),
     password: z.string().min(8, 'Must contain atleast 8 characters'),
     confirmPassword: z.string(),
   })
@@ -21,7 +27,25 @@ type Schema = z.infer<typeof schema>;
 export default function SignUp({ action }: { action: () => void }) {
   const form = useForm<Schema>({ resolver: zodResolver(schema) });
 
-  const submit = (data: Schema) => {};
+  const { toast } = useToast();
+
+  const { mutate: createAccount, isLoading: createLoading } =
+    trpc.auth.createAccount.useMutation({
+      onSuccess: () => {
+        action();
+      },
+      onError: (error) => {
+        toast({
+          title: 'Something went wrong',
+          description: error.message,
+          variant: 'destructive',
+        });
+      },
+    });
+
+  const submit = (data: Schema) => {
+    createAccount({ ...data });
+  };
 
   return (
     <div className='p-8'>
@@ -76,8 +100,13 @@ export default function SignUp({ action }: { action: () => void }) {
         </div>
         <Button
           onClick={form.handleSubmit(submit)}
+          disabled={createLoading}
           className='w-full mt-6 mb-2'>
-          Create my account
+          {createLoading ? (
+            <Loader2 className='w-4 h-4 animate-spin' />
+          ) : (
+            'Create my account'
+          )}
         </Button>
         <p>
           Already have an account?{' '}

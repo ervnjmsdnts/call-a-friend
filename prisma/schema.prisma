@@ -16,10 +16,9 @@ enum UserRole {
 }
 
 model User {
-  id        String   @id @unique
-  email     String   @unique
-  firstName String
-  lastName  String
-  role      UserRole
-  createdAt DateTime @default(now())
+  id        String    @id @unique
+  email     String    @unique
+  name      String
+  role      UserRole?
+  createdAt DateTime  @default(now())
 }
