@@ -60,9 +60,11 @@ export const authRouter = router({
   assignRole: privateProcedure
     .input(z.object({ role: z.enum(['SERVICE', 'CLIENT']) }))
     .mutation(async ({ ctx, input }) => {
-      await db.user.update({
+      const user = await db.user.update({
         where: { id: ctx.user.id },
         data: { role: input.role },
       });
+
+      return { updatedRole: user.role };
     }),
 });

@@ -8,12 +8,20 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { UserRole } from '@prisma/client';
 import { Loader2 } from 'lucide-react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 export default function AssignRole() {
   const [selectedRole, setSelectedRole] = useState<UserRole>();
 
-  const { mutate: assignRole, isLoading } = trpc.auth.assignRole.useMutation();
+  const router = useRouter();
+
+  const { mutate: assignRole, isLoading } = trpc.auth.assignRole.useMutation({
+    onSuccess: ({ updatedRole }) => {
+      if (updatedRole === 'CLIENT') return router.replace('/c/posts');
+      if (updatedRole === 'SERVICE') return router.replace('/s/services');
+    },
+  });
 
   const submit = () => {
     assignRole({ role: selectedRole! });
