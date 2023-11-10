@@ -12,7 +12,7 @@ export default function Landing() {
           <div className='relative w-[300px] h-[300px]'>
             <Image src='/landing.svg' alt='Landing' fill />
           </div>
-          <p className='text-center w-96 text-lg text-muted-foreground'>
+          <p className='text-center px-4 text-lg text-muted-foreground'>
             Where Talents Meet Opportunities And Your Compass To A World Of
             Possibilities
           </p>
