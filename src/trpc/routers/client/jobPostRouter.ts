@@ -54,4 +54,13 @@ export const jobPostRouter = router({
         },
       });
     }),
+
+  getAll: privateProcedure.query(async () => {
+    const posts = await db.jobPost.findMany({
+      orderBy: { createdAt: 'desc' },
+      include: { user: true },
+    });
+
+    return posts;
+  }),
 });

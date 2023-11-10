@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Sheet, SheetContent, SheetTrigger } from './ui/sheet';
 import {
   Bell,
@@ -17,6 +17,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 import { trpc } from '@/app/_trpc/client';
+import { router } from '@/trpc/trpc';
 
 const routes: {
   href: string;
@@ -45,12 +46,18 @@ const routes: {
   {
     href: '/discover',
     Icon: Search,
-    label: 'Discover Clients',
+    label: 'Discover Jobs',
     role: ['SERVICE'],
   },
 ];
 
-function SidebarSheet({ userRole }: { userRole: UserRole }) {
+function SidebarSheet({
+  userRole,
+  userName,
+}: {
+  userRole: UserRole;
+  userName: string;
+}) {
   const [open, setOpen] = useState(false);
 
   const pathname = usePathname();
@@ -70,7 +77,8 @@ function SidebarSheet({ userRole }: { userRole: UserRole }) {
       </SheetTrigger>
       <SheetContent side='left' className='w-full'>
         <div className='flex flex-col h-full py-4'>
-          <div className='flex-grow flex flex-col gap-3'>
+          <p className='text-lg font-bold'>Hello, {userName}</p>
+          <div className='flex-grow flex flex-col mt-4 gap-3'>
             {routes
               .filter((fil) => fil.role.includes(userRole))
               .map((route, index) => (
@@ -128,11 +136,23 @@ function Notifications() {
   );
 }
 
-export default function AppNavbar({ userRole }: { userRole: UserRole }) {
+export default function AppNavbar({
+  userRole,
+  userName,
+}: {
+  userRole: UserRole;
+  userName: string;
+}) {
+  const router = useRouter();
+  useEffect(() => {
+    router.refresh();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <nav className='px-4 border-b py-6'>
       <div className='flex items-center justify-between'>
-        <SidebarSheet userRole={userRole} />
+        <SidebarSheet userRole={userRole} userName={userName} />
         <Notifications />
       </div>
     </nav>

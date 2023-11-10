@@ -54,4 +54,13 @@ export const serviceRouter = router({
     .mutation(async ({ input }) => {
       await db.service.delete({ where: { id: input.serviceId } });
     }),
+
+  getAll: privateProcedure.query(async () => {
+    const services = await db.service.findMany({
+      orderBy: { createdAt: 'desc' },
+      include: { user: true },
+    });
+
+    return services;
+  }),
 });

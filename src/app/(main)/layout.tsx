@@ -17,13 +17,13 @@ export default async function MainLayout({ children }: PropsWithChildren) {
 
   const dbUser = await db.user.findFirst({ where: { id: user.id } });
 
-  if (!dbUser || !dbUser.id) return redirect('/auth');
+  if (!dbUser || !dbUser.id || !dbUser.name) return redirect('/auth');
 
   if (!dbUser.role) return redirect('/auth/assign-role');
 
   return (
     <div className='flex flex-col h-full'>
-      <AppNavbar userRole={dbUser.role} />
+      <AppNavbar userRole={dbUser.role} userName={dbUser.name} />
       <div className='p-4'>{children}</div>
     </div>
   );
