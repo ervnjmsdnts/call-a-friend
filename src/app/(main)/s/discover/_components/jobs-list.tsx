@@ -2,7 +2,9 @@
 
 import { trpc } from '@/app/_trpc/client';
 import { Button } from '@/components/ui/button';
+import { format } from 'date-fns';
 import { Ghost, Loader2 } from 'lucide-react';
+import Link from 'next/link';
 
 export default function JobsList() {
   const { data: posts, isLoading } = trpc.clients.jobPost.getAll.useQuery();
@@ -19,12 +21,15 @@ export default function JobsList() {
                   <p className='text-sm text-muted-foreground'>
                     {post.user.name}
                   </p>
+                  <p className='text-sm text-muted-foreground'>
+                    {format(new Date(post.createdAt), 'PPp')}
+                  </p>
                 </div>
-                {post.description ? (
-                  <p className='text-sm'>{post.description}</p>
-                ) : null}
-
-                <Button className='w-full'>Apply Now</Button>
+                <div className='flex justify-end'>
+                  <Button asChild>
+                    <Link href={`/s/discover/${post.id}`}>Apply Now</Link>
+                  </Button>
+                </div>
               </div>
             </div>
           ))}

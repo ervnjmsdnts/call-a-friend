@@ -16,20 +16,23 @@ export default function Service({ service }: { service: Service }) {
         </p>
       </div>
       <p>{service.description}</p>
-
       <div>
         <h2 className='text-lg font-semibold'>Category</h2>
         <p>{toTitleCase(service.category)}</p>
       </div>
-
       <div>
         <h2 className='text-lg font-semibold'>Location</h2>
-        <p>{service.location}</p>
+        <p>
+          {service.address}, Brgy. {service.barangay}
+        </p>
       </div>
-
       <div>
         <h2 className='text-lg font-semibold'>Price Range</h2>
         <p>{getBudgetRange(service.priceRange)}</p>
+      </div>
+      <div>
+        <h2 className='text-lg font-semibold'>Ratings</h2>
+        <p>No Ratings</p>
       </div>
     </div>
   );

@@ -5,6 +5,7 @@ import { Ghost, Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { Badge } from '@/components/ui/badge';
 
 export default function MyJobsList() {
   const { data: posts, isLoading: postsLoading } =
@@ -15,18 +16,20 @@ export default function MyJobsList() {
       {posts && posts.length > 0 ? (
         <div className='flex flex-col gap-3 w-full'>
           {posts.map((post) => (
-            <Button
-              key={post.id}
-              variant='outline'
-              asChild
-              className='items-start flex-col py-8'>
-              <Link href={`/c/posts/${post.id}`}>
-                <h2 className='text-lg font-semibold'>{post.title}</h2>
-                <p className='text-sm text-muted-foreground'>
-                  {format(new Date(post.createdAt), 'PPp')}
-                </p>
-              </Link>
-            </Button>
+            <div key={post.id} className='p-4 rounded-lg border'>
+              <div className='flex items-start justify-between'>
+                <p className='font-semibold text-lg'>{post.title}</p>
+                <Badge variant='secondary'>{post.status}</Badge>
+              </div>
+              <p className='text-muted-foreground mb-2 text-sm'>
+                {format(new Date(post.createdAt), 'PPp')}
+              </p>
+              <div className='flex justify-end'>
+                <Button variant='outline'>
+                  <Link href={`/c/posts/${post.id}`}>View Job Post</Link>
+                </Button>
+              </div>
+            </div>
           ))}
         </div>
       ) : postsLoading ? (

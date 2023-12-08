@@ -4,8 +4,11 @@ import { useEffect, useState } from 'react';
 import { Sheet, SheetContent, SheetTrigger } from './ui/sheet';
 import {
   Bell,
+  BookCopy,
+  FileBadge,
   LogOut,
   LucideIcon,
+  MailPlus,
   Menu,
   PenSquare,
   Search,
@@ -17,7 +20,6 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 import { trpc } from '@/app/_trpc/client';
-import { router } from '@/trpc/trpc';
 
 const routes: {
   href: string;
@@ -38,6 +40,18 @@ const routes: {
     role: ['CLIENT'],
   },
   {
+    href: '/my-invitations',
+    Icon: MailPlus,
+    label: 'My Invitations',
+    role: ['CLIENT'],
+  },
+  {
+    href: '/applications',
+    Icon: FileBadge,
+    label: 'Applications',
+    role: ['CLIENT'],
+  },
+  {
     href: '/services',
     Icon: UserCog2,
     label: 'My Services',
@@ -47,6 +61,18 @@ const routes: {
     href: '/discover',
     Icon: Search,
     label: 'Discover Jobs',
+    role: ['SERVICE'],
+  },
+  {
+    href: '/invitations',
+    Icon: MailPlus,
+    label: 'Invitations',
+    role: ['SERVICE'],
+  },
+  {
+    href: '/my-jobs',
+    Icon: BookCopy,
+    label: 'My Jobs',
     role: ['SERVICE'],
   },
 ];

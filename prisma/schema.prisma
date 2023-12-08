@@ -16,14 +16,14 @@ enum UserRole {
 }
 
 model User {
-  id        String          @id @unique
-  email     String          @unique
-  name      String
-  role      UserRole?
-  createdAt DateTime        @default(now())
-  jobPosts  JobPost[]
-  services  Service[]
-  ratings   ServiceRating[]
+  id            String          @id @unique
+  email         String          @unique
+  name          String
+  role          UserRole?
+  createdAt     DateTime        @default(now())
+  jobPosts      JobPost[]
+  services      Service[]
+  ServiceRating ServiceRating[]
 }
 
 enum BudgetRange {
@@ -32,27 +32,61 @@ enum BudgetRange {
   HIGHBUDGET
 }
 
-model JobPost {
-  id          String      @id @unique @default(uuid())
-  title       String
-  location    String
-  description String?
-  budgetRange BudgetRange
-  user        User        @relation(fields: [userId], references: [id])
-  userId      String
-  createdAt   DateTime    @default(now())
-}
-
 enum ServiceCategory {
   CATERING
   CONSTRUCTION
   DEMOLITION
 }
 
+enum JobStatus {
+  PENDING
+  ONGOING
+  DONE
+  TERMINATED
+}
+
+model JobPost {
+  id              String          @id @unique @default(uuid())
+  title           String
+  address         String
+  barangay        String
+  description     String?
+  category        ServiceCategory
+  acceptedService Service?        @relation(fields: [serviceId], references: [id])
+  budgetRange     BudgetRange
+  user            User            @relation(fields: [userId], references: [id])
+  status          JobStatus       @default(PENDING)
+  userId          String
+  createdAt       DateTime        @default(now())
+  InviteSerivce   InviteService[]
+  serviceId       String?
+  ServiceRating   ServiceRating[]
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  CANCELLED
+  INVALID
+}
+
+model InviteService {
+  id        String           @id @unique @default(uuid())
+  service   Service          @relation(fields: [serviceId], references: [id])
+  post      JobPost          @relation(fields: [jobPostId], references: [id])
+  message   String?
+  status    InvitationStatus @default(PENDING)
+  createdAt DateTime         @default(now())
+  serviceId String
+  jobPostId String
+}
+
 model Service {
   id          String          @id @unique @default(uuid())
   name        String
-  location    String
+  address     String
+  barangay    String
   description String?
   priceRange  BudgetRange
   category    ServiceCategory
@@ -60,6 +94,8 @@ model Service {
   createdAt   DateTime        @default(now())
   userId      String
   ratings     ServiceRating[]
+  invitations InviteService[]
+  JobPost     JobPost[]
 }
 
 model ServiceRating {
@@ -67,8 +103,10 @@ model ServiceRating {
   rating    Int
   comment   String?
   service   Service  @relation(fields: [serviceId], references: [id])
+  jobPost   JobPost  @relation(fields: [jobPostId], references: [id])
   user      User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
   serviceId String
+  jobPostId String
   userId    String
 }

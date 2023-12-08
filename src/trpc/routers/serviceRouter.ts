@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { privateProcedure, router } from '../trpc';
+import { privateProcedure, publicProcedure, router } from '../trpc';
 import { db } from '@/db';
 
 export const serviceRouter = router({
@@ -8,7 +8,8 @@ export const serviceRouter = router({
       z.object({
         name: z.string(),
         category: z.enum(['CATERING', 'CONSTRUCTION', 'DEMOLITION']),
-        location: z.string(),
+        barangay: z.string(),
+        address: z.string(),
         description: z.string(),
         priceRange: z.enum(['LOWBUDGET', 'MIDBUDGET', 'HIGHBUDGET']),
       }),
@@ -31,7 +32,8 @@ export const serviceRouter = router({
         serviceId: z.string(),
         name: z.string(),
         category: z.enum(['CATERING', 'CONSTRUCTION', 'DEMOLITION']),
-        location: z.string(),
+        barangay: z.string(),
+        address: z.string(),
         description: z.string(),
         priceRange: z.enum(['LOWBUDGET', 'MIDBUDGET', 'HIGHBUDGET']),
       }),
@@ -42,7 +44,8 @@ export const serviceRouter = router({
         data: {
           category: input.category,
           description: input.description,
-          location: input.location,
+          barangay: input.barangay,
+          address: input.address,
           name: input.name,
           priceRange: input.priceRange,
         },
@@ -63,4 +66,45 @@ export const serviceRouter = router({
 
     return services;
   }),
+
+  acceptInvitation: publicProcedure
+    .input(
+      z.object({
+        invitationId: z.string(),
+        serviceId: z.string(),
+        postId: z.string(),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      await db.$transaction([
+        db.inviteService.updateMany({
+          where: {
+            jobPostId: input.postId,
+            serviceId: input.serviceId,
+            NOT: { id: input.invitationId },
+          },
+          data: { status: 'INVALID' },
+        }),
+        db.inviteService.update({
+          where: { id: input.invitationId },
+          data: { status: 'ACCEPTED' },
+        }),
+        db.jobPost.update({
+          where: { id: input.postId },
+          data: {
+            acceptedService: { connect: { id: input.serviceId } },
+            status: 'ONGOING',
+          },
+        }),
+      ]);
+    }),
+
+  rejectInvitation: publicProcedure
+    .input(z.object({ invitationId: z.string() }))
+    .mutation(async ({ input }) => {
+      await db.inviteService.update({
+        where: { id: input.invitationId },
+        data: { status: 'REJECTED' },
+      });
+    }),
 });

@@ -24,7 +24,7 @@ export default async function MainLayout({ children }: PropsWithChildren) {
   return (
     <div className='flex flex-col h-full'>
       <AppNavbar userRole={dbUser.role} userName={dbUser.name} />
-      <div className='p-4'>{children}</div>
+      <div className='p-4 h-full'>{children}</div>
     </div>
   );
 }
