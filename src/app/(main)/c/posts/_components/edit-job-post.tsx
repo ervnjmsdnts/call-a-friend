@@ -20,7 +20,7 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { Textarea } from '@/components/ui/textarea';
-import { cn } from '@/lib/utils';
+import { cn, toPhp } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { JobPost } from '@prisma/client';
 import { Loader2, Pencil } from 'lucide-react';
@@ -34,7 +34,7 @@ const schema = z.object({
   barangay: z.string().min(1),
   address: z.string().min(1),
   description: z.string(),
-  budgetRange: z.enum(['LOWBUDGET', 'MIDBUDGET', 'HIGHBUDGET']),
+  price: z.number().min(100),
   category: z.enum(['CATERING', 'CONSTRUCTION', 'DEMOLITION']),
 });
 
@@ -47,7 +47,7 @@ export default function EditJobPost({ post }: { post: JobPost }) {
       title: post.title,
       barangay: post.barangay,
       address: post.address,
-      budgetRange: post.budgetRange,
+      price: post.price,
       category: post.category,
       description: post.description ?? '',
     },
@@ -180,36 +180,14 @@ export default function EditJobPost({ post }: { post: JobPost }) {
               />
             </div>
             <div className='grid gap-2'>
-              <h3 className='font-semibold'>Budget Range</h3>
-              <Controller
-                control={form.control}
-                name='budgetRange'
-                render={({ field }) => (
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}>
-                    <SelectTrigger
-                      className={cn(
-                        form.formState.errors.budgetRange &&
-                          'focus-visible:ring-red-500 focus-visible:ring-1 border-red-500',
-                        field.value ? 'text-black' : 'text-muted-foreground',
-                      )}>
-                      <SelectValue placeholder='Select budget range' />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectLabel>Budget Range</SelectLabel>
-                        <SelectItem value='LOWBUDGET'>1000 - 10,000</SelectItem>
-                        <SelectItem value='MIDBUDGET'>
-                          10,001 - 50,000
-                        </SelectItem>
-                        <SelectItem value='HIGHBUDGET'>
-                          50,001 - 100,000
-                        </SelectItem>
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
+              <h3 className='font-semibold'>Price (Mimimum of {toPhp(100)})</h3>
+              <Input
+                placeholder='100'
+                className={cn(
+                  form.formState.errors.price &&
+                    'focus-visible:ring-red-500 focus-visible:ring-1 border-red-500',
                 )}
+                {...form.register('price', { valueAsNumber: true })}
               />
             </div>
           </div>

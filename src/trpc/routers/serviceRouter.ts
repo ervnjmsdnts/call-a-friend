@@ -21,7 +21,7 @@ export const serviceRouter = router({
 
   getUserServices: privateProcedure.query(async ({ ctx }) => {
     const services = await db.service.findMany({
-      where: { userId: ctx.user.id },
+      where: { userId: ctx.user.id, isActive: true },
       include: { user: true, ratings: true },
     });
 
@@ -57,11 +57,15 @@ export const serviceRouter = router({
   deleteService: privateProcedure
     .input(z.object({ serviceId: z.string() }))
     .mutation(async ({ input }) => {
-      await db.service.delete({ where: { id: input.serviceId } });
+      await db.service.update({
+        where: { id: input.serviceId },
+        data: { isActive: false },
+      });
     }),
 
   getAll: privateProcedure.query(async () => {
     const services = await db.service.findMany({
+      where: { isActive: true },
       orderBy: { createdAt: 'desc' },
       include: { user: true },
     });

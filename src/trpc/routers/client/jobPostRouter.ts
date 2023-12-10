@@ -12,7 +12,7 @@ export const jobPostRouter = router({
         address: z.string(),
         category: z.enum(['CATERING', 'CONSTRUCTION', 'DEMOLITION']),
         description: z.string(),
-        budgetRange: z.enum(['LOWBUDGET', 'MIDBUDGET', 'HIGHBUDGET']),
+        price: z.number(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
@@ -25,7 +25,7 @@ export const jobPostRouter = router({
     }),
   getUserJobs: privateProcedure.query(async ({ ctx }) => {
     const jobs = db.jobPost.findMany({
-      where: { userId: ctx.user.id },
+      where: { userId: ctx.user.id, isActive: true },
     });
 
     return jobs;
@@ -34,7 +34,10 @@ export const jobPostRouter = router({
   deleteJobPost: privateProcedure
     .input(z.object({ postId: z.string() }))
     .mutation(async ({ input }) => {
-      await db.jobPost.delete({ where: { id: input.postId } });
+      await db.jobPost.update({
+        where: { id: input.postId },
+        data: { isActive: false },
+      });
     }),
 
   updateJobPost: privateProcedure
@@ -46,7 +49,7 @@ export const jobPostRouter = router({
         category: z.enum(['CATERING', 'CONSTRUCTION', 'DEMOLITION']),
         address: z.string(),
         description: z.string(),
-        budgetRange: z.enum(['LOWBUDGET', 'MIDBUDGET', 'HIGHBUDGET']),
+        price: z.number(),
       }),
     )
     .mutation(async ({ input }) => {
@@ -54,7 +57,7 @@ export const jobPostRouter = router({
         where: { id: input.postId },
         data: {
           category: input.category,
-          budgetRange: input.budgetRange,
+          price: input.price,
           description: input.description,
           title: input.title,
           barangay: input.barangay,
@@ -65,7 +68,7 @@ export const jobPostRouter = router({
 
   getAll: privateProcedure.query(async () => {
     const posts = await db.jobPost.findMany({
-      where: { status: 'PENDING' },
+      where: { status: 'PENDING', isActive: true },
       orderBy: { createdAt: 'desc' },
       include: { user: true },
     });

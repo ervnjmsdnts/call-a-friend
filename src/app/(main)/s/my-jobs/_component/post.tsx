@@ -1,5 +1,5 @@
 import { Badge } from '@/components/ui/badge';
-import { getBudgetRange } from '@/lib/utils';
+import { toPhp } from '@/lib/utils';
 import { JobPost, ServiceRating } from '@prisma/client';
 import { format } from 'date-fns';
 import { Star } from 'lucide-react';
@@ -31,8 +31,8 @@ export default function Post({
         </p>
       </div>
       <div>
-        <h2 className='text-lg font-semibold'>Budget Range</h2>
-        <p>{getBudgetRange(post.budgetRange)}</p>
+        <h2 className='text-lg font-semibold'>Price</h2>
+        <p>{toPhp(post.price)}</p>
       </div>
       {serviceRating && serviceRating.id ? (
         <div>

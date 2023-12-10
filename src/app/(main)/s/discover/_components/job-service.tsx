@@ -1,7 +1,7 @@
-import { getBudgetRange } from '@/lib/utils';
 import { ApplyJob, JobPost } from '@prisma/client';
 import { format } from 'date-fns';
 import ApplyButton from './apply-button';
+import { toPhp } from '@/lib/utils';
 
 export default function JobService({
   post,
@@ -29,8 +29,8 @@ export default function JobService({
         </div>
 
         <div>
-          <h2 className='text-lg font-semibold'>Budget Range</h2>
-          <p>{getBudgetRange(post.budgetRange)}</p>
+          <h2 className='text-lg font-semibold'>Price</h2>
+          <p>{toPhp(post.price)}</p>
         </div>
       </div>
       <ApplyButton postId={post.id} jobApplications={post.jobApplications} />

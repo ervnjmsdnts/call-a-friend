@@ -1,10 +1,9 @@
-import { getBudgetRange } from '@/lib/utils';
 import { InviteService, JobPost, Service, User } from '@prisma/client';
 import { format } from 'date-fns';
 import RejectInvitationButton from './reject-invitation-button';
 import AcceptInvitationButton from './accept-invitation-button';
 import { Badge } from '@/components/ui/badge';
-import { Star } from 'lucide-react';
+import { toPhp } from '@/lib/utils';
 
 export default function Invite({
   invitation,
@@ -36,8 +35,8 @@ export default function Invite({
         </div>
 
         <div>
-          <h2 className='text-lg font-semibold'>Budget Range</h2>
-          <p>{getBudgetRange(post.budgetRange)}</p>
+          <h2 className='text-lg font-semibold'>Price</h2>
+          <p>{toPhp(post.price)}</p>
         </div>
       </div>
       {!post.acceptedService ? (

@@ -17,11 +17,11 @@ export default async function SinglePostPage({
   if (!post || !post.id) return notFound();
 
   const priceRange =
-    post.budgetRange === 'LOWBUDGET'
+    post.price >= 100 && post.price <= 100000
       ? { gte: 100, lte: 10000 }
-      : post.budgetRange === 'MIDBUDGET'
+      : post.price >= 10001 && post.price <= 50000
       ? { gte: 10001, lte: 50000 }
-      : post.budgetRange === 'HIGHBUDGET'
+      : post.price >= 50001 && post.price <= 100000
       ? { gte: 50001, lte: 100000 }
       : { gte: 0, lte: 1000000 };
 

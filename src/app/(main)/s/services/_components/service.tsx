@@ -1,4 +1,4 @@
-import { getBudgetRange, toPhp, toTitleCase } from '@/lib/utils';
+import { toPhp, toTitleCase } from '@/lib/utils';
 import { JobPost, Service, ServiceRating, User } from '@prisma/client';
 import { format } from 'date-fns';
 import ActionDropdown from './action-dropdown';

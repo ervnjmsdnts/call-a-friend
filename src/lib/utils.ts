@@ -1,4 +1,3 @@
-import { BudgetRange } from '@prisma/client';
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -15,14 +14,6 @@ export function toPhp(value: string | number) {
   }).format(price);
 
   return formatted;
-}
-
-export function getBudgetRange(range: BudgetRange) {
-  return range === 'LOWBUDGET'
-    ? `${toPhp(100)} - ${toPhp(10000)}`
-    : range === 'MIDBUDGET'
-    ? `${toPhp(10001)} - ${toPhp(50000)}`
-    : `${toPhp(50001)} - ${toPhp(100000)}`;
 }
 
 export function toTitleCase(string: string | null) {

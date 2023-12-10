@@ -1,4 +1,3 @@
-import { getBudgetRange } from '@/lib/utils';
 import { JobPost, Service, ServiceRating, User } from '@prisma/client';
 import { format } from 'date-fns';
 import ActionDropdown from './action-dropdown';
@@ -10,6 +9,7 @@ import SetJobDoneButton from './set-job-done-button';
 import TerminateJobButton from './terminate-job-button';
 import { Badge } from '@/components/ui/badge';
 import RateService from './rate-service';
+import { toPhp } from '@/lib/utils';
 
 type TSuggestedService = Service & {
   user: { name: string };
@@ -104,8 +104,8 @@ export default function Post({
           </p>
         </div>
         <div>
-          <h2 className='text-lg font-semibold'>Budget Range</h2>
-          <p>{getBudgetRange(post.budgetRange)}</p>
+          <h2 className='text-lg font-semibold'>Price</h2>
+          <p>{toPhp(post.price)}</p>
         </div>
         {post.serviceId && post.acceptedService?.id && post.acceptedService ? (
           <div>

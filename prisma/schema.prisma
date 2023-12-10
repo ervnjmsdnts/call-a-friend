@@ -63,7 +63,7 @@ model JobPost {
   description     String?
   category        ServiceCategory
   acceptedService Service?        @relation(fields: [serviceId], references: [id])
-  budgetRange     BudgetRange
+  price           Float           @default(0)
   user            User            @relation(fields: [userId], references: [id])
   status          JobStatus       @default(PENDING)
   userId          String
@@ -72,6 +72,7 @@ model JobPost {
   serviceId       String?
   ServiceRating   ServiceRating[]
   jobApplications ApplyJob[]
+  isActive        Boolean         @default(true)
 }
 
 enum InvitationStatus {
@@ -119,6 +120,7 @@ model Service {
   invitations     InviteService[]
   JobPost         JobPost[]
   jobApplications ApplyJob[]
+  isActive        Boolean         @default(true)
 }
 
 model ServiceRating {

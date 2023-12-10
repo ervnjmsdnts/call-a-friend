@@ -5,8 +5,6 @@ import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { TRPCError } from '@trpc/server';
 import { format } from 'date-fns';
 import { cookies } from 'next/headers';
-import CancelInvitationButton from './_components/cancel-invitation-button';
-import DeleteInvitationButton from './_components/delete-invitation-button';
 import Link from 'next/link';
 
 export default async function MyInvitations() {
