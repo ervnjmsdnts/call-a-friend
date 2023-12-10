@@ -1,4 +1,4 @@
-import { getBudgetRange, toTitleCase } from '@/lib/utils';
+import { getBudgetRange, toPhp, toTitleCase } from '@/lib/utils';
 import { JobPost, Service, ServiceRating, User } from '@prisma/client';
 import { format } from 'date-fns';
 import ActionDropdown from './action-dropdown';
@@ -43,8 +43,8 @@ export default function Service({
           </p>
         </div>
         <div>
-          <h2 className='text-lg font-semibold'>Price Range</h2>
-          <p>{getBudgetRange(service.priceRange)}</p>
+          <h2 className='text-lg font-semibold'>Price</h2>
+          <p>{toPhp(service.price)}</p>
         </div>
         <div>
           <h2 className='text-lg font-semibold'>

@@ -16,11 +16,20 @@ export default async function SinglePostPage({
 
   if (!post || !post.id) return notFound();
 
+  const priceRange =
+    post.budgetRange === 'LOWBUDGET'
+      ? { gte: 100, lte: 10000 }
+      : post.budgetRange === 'MIDBUDGET'
+      ? { gte: 10001, lte: 50000 }
+      : post.budgetRange === 'HIGHBUDGET'
+      ? { gte: 50001, lte: 100000 }
+      : { gte: 0, lte: 1000000 };
+
   const services = await db.service.findMany({
     where: {
       barangay: post.barangay,
-      priceRange: post.budgetRange,
       category: post.category,
+      price: priceRange,
     },
     include: { user: { select: { name: true } }, ratings: true },
   });

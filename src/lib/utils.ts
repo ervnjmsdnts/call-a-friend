@@ -19,7 +19,7 @@ export function toPhp(value: string | number) {
 
 export function getBudgetRange(range: BudgetRange) {
   return range === 'LOWBUDGET'
-    ? `${toPhp(1000)} - ${toPhp(10000)}`
+    ? `${toPhp(100)} - ${toPhp(10000)}`
     : range === 'MIDBUDGET'
     ? `${toPhp(10001)} - ${toPhp(50000)}`
     : `${toPhp(50001)} - ${toPhp(100000)}`;

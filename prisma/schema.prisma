@@ -110,7 +110,7 @@ model Service {
   address         String
   barangay        String
   description     String?
-  priceRange      BudgetRange
+  price           Float           @default(0)
   category        ServiceCategory
   user            User            @relation(fields: [userId], references: [id])
   createdAt       DateTime        @default(now())

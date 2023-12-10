@@ -12,7 +12,7 @@ export const serviceRouter = router({
         barangay: z.string(),
         address: z.string(),
         description: z.string(),
-        priceRange: z.enum(['LOWBUDGET', 'MIDBUDGET', 'HIGHBUDGET']),
+        price: z.number(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
@@ -37,7 +37,7 @@ export const serviceRouter = router({
         barangay: z.string(),
         address: z.string(),
         description: z.string(),
-        priceRange: z.enum(['LOWBUDGET', 'MIDBUDGET', 'HIGHBUDGET']),
+        price: z.number(),
       }),
     )
     .mutation(async ({ input }) => {
@@ -49,7 +49,7 @@ export const serviceRouter = router({
           barangay: input.barangay,
           address: input.address,
           name: input.name,
-          priceRange: input.priceRange,
+          price: input.price,
         },
       });
     }),
