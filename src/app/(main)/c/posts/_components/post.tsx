@@ -133,20 +133,24 @@ export default function Post({
             </div>
           </div>
         ) : (
-          <div>
-            <h2 className='text-lg font-semibold'>Suggested Services</h2>
-            <div className='w-full flex overflow-x-auto'>
-              <div className='flex-1 flex items-center gap-2'>
-                {suggestedServices.map((service) => (
-                  <PostService
-                    key={service.id}
-                    service={service}
-                    postId={post.id}
-                  />
-                ))}
+          <>
+            {suggestedServices.length !== 0 ? (
+              <div>
+                <h2 className='text-lg font-semibold'>Suggested Services</h2>
+                <div className='w-full flex overflow-x-auto'>
+                  <div className='flex-1 flex items-center gap-2'>
+                    {suggestedServices.map((service) => (
+                      <PostService
+                        key={service.id}
+                        service={service}
+                        postId={post.id}
+                      />
+                    ))}
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
+            ) : null}
+          </>
         )}
         {serviceRating && serviceRating.id ? (
           <div>

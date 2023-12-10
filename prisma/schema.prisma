@@ -24,6 +24,7 @@ model User {
   jobPosts      JobPost[]
   services      Service[]
   ServiceRating ServiceRating[]
+  Notification  Notification[]
 }
 
 enum BudgetRange {
@@ -45,6 +46,15 @@ enum JobStatus {
   TERMINATED
 }
 
+model Notification {
+  id        String   @id @unique @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  message   String
+  isRead    Boolean  @default(true)
+  userId    String
+}
+
 model JobPost {
   id              String          @id @unique @default(uuid())
   title           String
@@ -61,6 +71,7 @@ model JobPost {
   InviteSerivce   InviteService[]
   serviceId       String?
   ServiceRating   ServiceRating[]
+  jobApplications ApplyJob[]
 }
 
 enum InvitationStatus {
@@ -82,20 +93,32 @@ model InviteService {
   jobPostId String
 }
 
+model ApplyJob {
+  id        String           @id @unique @default(uuid())
+  service   Service          @relation(fields: [serviceId], references: [id])
+  post      JobPost          @relation(fields: [jobPostId], references: [id])
+  message   String?
+  status    InvitationStatus @default(PENDING)
+  createdAt DateTime         @default(now())
+  serviceId String
+  jobPostId String
+}
+
 model Service {
-  id          String          @id @unique @default(uuid())
-  name        String
-  address     String
-  barangay    String
-  description String?
-  priceRange  BudgetRange
-  category    ServiceCategory
-  user        User            @relation(fields: [userId], references: [id])
-  createdAt   DateTime        @default(now())
-  userId      String
-  ratings     ServiceRating[]
-  invitations InviteService[]
-  JobPost     JobPost[]
+  id              String          @id @unique @default(uuid())
+  name            String
+  address         String
+  barangay        String
+  description     String?
+  priceRange      BudgetRange
+  category        ServiceCategory
+  user            User            @relation(fields: [userId], references: [id])
+  createdAt       DateTime        @default(now())
+  userId          String
+  ratings         ServiceRating[]
+  invitations     InviteService[]
+  JobPost         JobPost[]
+  jobApplications ApplyJob[]
 }
 
 model ServiceRating {

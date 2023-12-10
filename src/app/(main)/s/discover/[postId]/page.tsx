@@ -1,6 +1,6 @@
 import { db } from '@/db';
-import { notFound } from 'next/navigation';
 import JobService from '../_components/job-service';
+import { notFound } from 'next/navigation';
 
 export default async function ServicePost({
   params,
@@ -10,11 +10,11 @@ export default async function ServicePost({
   searchParams: { service: string };
 }) {
   const { postId } = params;
-  const { service } = searchParams;
+  // const { service } = searchParams;
 
   const post = await db.jobPost.findFirst({
     where: { id: postId },
-    include: { user: true },
+    include: { user: true, jobApplications: true },
   });
 
   if (!post || !post.id) return notFound();

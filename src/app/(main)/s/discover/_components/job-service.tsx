@@ -1,9 +1,13 @@
-import { Button } from '@/components/ui/button';
 import { getBudgetRange } from '@/lib/utils';
-import { JobPost } from '@prisma/client';
+import { ApplyJob, JobPost } from '@prisma/client';
 import { format } from 'date-fns';
+import ApplyButton from './apply-button';
 
-export default function JobService({ post }: { post: JobPost }) {
+export default function JobService({
+  post,
+}: {
+  post: JobPost & { jobApplications: ApplyJob[] };
+}) {
   return (
     <div className='flex flex-col h-full'>
       <div className='space-y-4 flex-1'>
@@ -29,7 +33,7 @@ export default function JobService({ post }: { post: JobPost }) {
           <p>{getBudgetRange(post.budgetRange)}</p>
         </div>
       </div>
-      <Button>Apply</Button>
+      <ApplyButton postId={post.id} jobApplications={post.jobApplications} />
     </div>
   );
 }

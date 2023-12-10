@@ -6,6 +6,8 @@ import {
   Bell,
   BookCopy,
   FileBadge,
+  FileSearch,
+  Loader2,
   LogOut,
   LucideIcon,
   MailPlus,
@@ -20,6 +22,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 import { trpc } from '@/app/_trpc/client';
+import { supabase } from '@/lib/supabase';
 
 const routes: {
   href: string;
@@ -73,6 +76,12 @@ const routes: {
     href: '/my-jobs',
     Icon: BookCopy,
     label: 'My Jobs',
+    role: ['SERVICE'],
+  },
+  {
+    href: '/my-applications',
+    Icon: FileSearch,
+    label: 'My Applications',
     role: ['SERVICE'],
   },
 ];
@@ -142,21 +151,73 @@ function SidebarSheet({
 }
 
 function Notifications() {
+  const { data: notifications, isLoading } =
+    trpc.notifications.getUserNotifications.useQuery();
+
+  const util = trpc.useUtils();
+
+  const { mutate: readNotifications } =
+    trpc.notifications.readAllNotificationsOfUser.useMutation({
+      onSuccess: () => util.notifications.getUserNotifications.invalidate(),
+    });
+
+  const hasNewNotifications = notifications?.some((notif) => notif.isRead);
+
+  useEffect(() => {
+    const channel = supabase
+      .channel('realtime_audits')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'Notification',
+        },
+        (payload) => {
+          util.notifications.getUserNotifications.invalidate();
+        },
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [util]);
+
   return (
     <Popover>
       <PopoverTrigger asChild>
         <Button
           variant='outline'
+          onClick={() => readNotifications()}
           className='rounded-full relative w-10 h-10 p-2'>
-          <span className='flex h-3 w-3 z-10 right-0 top-0 absolute'>
-            <span className='animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75'></span>
-            <span className='relative inline-flex rounded-full h-3 w-3 bg-primary'></span>
-          </span>
+          {hasNewNotifications ? (
+            <>
+              <span className='flex h-3 w-3 z-10 right-0 top-0 absolute'>
+                <span className='animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75'></span>
+                <span className='relative inline-flex rounded-full h-3 w-3 bg-primary'></span>
+              </span>
+            </>
+          ) : null}
           <Bell className='w-8 h-8 text-muted-foreground' />
         </Button>
       </PopoverTrigger>
       <PopoverContent>
-        <div>No Notifications</div>
+        {notifications && notifications.length !== 0 ? (
+          <div className='flex flex-col gap-1 max-h-52 overflow-y-auto'>
+            {notifications.map((notif) => (
+              <p className='text-xs' key={notif.id}>
+                {notif.message}
+              </p>
+            ))}
+          </div>
+        ) : isLoading ? (
+          <div className='justify-center items-center flex'>
+            <Loader2 className='w-4 h-4 animate-spin' />
+          </div>
+        ) : (
+          <div>No notifications</div>
+        )}
       </PopoverContent>
     </Popover>
   );

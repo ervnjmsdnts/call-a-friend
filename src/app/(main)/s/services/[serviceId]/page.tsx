@@ -9,7 +9,15 @@ export default async function SingleServicePage({
 }) {
   const { serviceId } = params;
 
-  const service = await db.service.findFirst({ where: { id: serviceId } });
+  const service = await db.service.findFirst({
+    where: { id: serviceId },
+
+    include: {
+      user: true,
+      invitations: true,
+      ratings: { include: { jobPost: true } },
+    },
+  });
 
   if (!service || !service.id) return notFound();
 

@@ -11,17 +11,21 @@ import {
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-export default function CancelInvitationButton({
-  inviteId,
+export default function CancelApplication({
+  applicationId,
 }: {
-  inviteId: string;
+  applicationId: string;
 }) {
   const [open, setOpen] = useState(false);
 
   const router = useRouter();
-  const { mutate: cancelInvite, isLoading } =
-    trpc.clients.invitation.cancelInvitation.useMutation({
-      onSuccess: () => router.refresh(),
+
+  const { mutate: cancelApplication, isLoading } =
+    trpc.services.cancelApplication.useMutation({
+      onSuccess: () => {
+        router.refresh();
+        router.back();
+      },
     });
 
   return (
@@ -40,7 +44,7 @@ export default function CancelInvitationButton({
           <Button
             variant='outline'
             disabled={isLoading}
-            onClick={() => cancelInvite({ invitationId: inviteId })}>
+            onClick={() => cancelApplication({ applicationId })}>
             Yes
           </Button>
         </DialogFooter>

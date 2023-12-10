@@ -5,11 +5,9 @@ import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { TRPCError } from '@trpc/server';
 import { format } from 'date-fns';
 import { cookies } from 'next/headers';
-import CancelInvitationButton from './_components/cancel-invitation-button';
-import DeleteInvitationButton from './_components/delete-invitation-button';
 import Link from 'next/link';
 
-export default async function MyInvitations() {
+export default async function Applications() {
   const cookieStore = cookies();
   const supabase = createServerComponentClient({ cookies: () => cookieStore });
   const {
@@ -22,31 +20,32 @@ export default async function MyInvitations() {
 
   if (!user || !user.id) throw new TRPCError({ code: 'UNAUTHORIZED' });
 
-  const invitations = await db.inviteService.findMany({
-    where: { post: { userId: user.id } },
-    include: { service: true },
+  const applications = await db.applyJob.findMany({
+    where: {
+      post: { userId: user.id },
+      status: { not: 'ACCEPTED' },
+    },
+    include: { post: true },
   });
 
   return (
     <div>
-      <h2 className='text-lg font-semibold mb-4'>My Invitations</h2>
+      <h2 className='text-lg font-semibold mb-4'>Applications</h2>
       <div className='flex flex-col gap-2'>
-        {invitations.map((invite) => (
-          <div key={invite.id} className='p-4 rounded-lg border'>
-            <div className='flex items-start justify-between'>
+        {applications.map((app) => (
+          <div key={app.id} className='p-4 rounded-lg border'>
+            <div className='flex items-start gap-1 justify-between'>
               <p className='font-semibold text-lg'>
-                Invitation for {invite.service.name}
+                Application for Post {app.post.title}
               </p>
-              <Badge variant='secondary'>{invite.status}</Badge>
+              <Badge variant='secondary'>{app.status}</Badge>
             </div>
             <p className='text-muted-foreground mb-2 text-sm'>
-              {format(new Date(invite.createdAt), 'PPp')}
+              {format(new Date(app.createdAt), 'PPp')}
             </p>
-            <div className='flex justify-end'>
-              <Button variant='outline'>
-                <Link href={`/c/my-invitations/${invite.id}`}>
-                  View Invitation
-                </Link>
+            <div className='flex mt-4 justify-end'>
+              <Button asChild variant='outline'>
+                <Link href={`/c/applications/${app.id}`}>View Application</Link>
               </Button>
             </div>
           </div>

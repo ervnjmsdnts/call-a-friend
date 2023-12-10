@@ -3,6 +3,7 @@ import { publicProcedure, router } from '@/trpc/trpc';
 import { z } from 'zod';
 
 export const invitationRouter = router({
+  // Notify Provider
   inviteService: publicProcedure
     .input(
       z.object({
@@ -21,12 +22,26 @@ export const invitationRouter = router({
       });
     }),
 
+  // Notify Provider
   cancelInvitation: publicProcedure
     .input(z.object({ invitationId: z.string() }))
     .mutation(async ({ input }) => {
-      await db.inviteService.update({
-        where: { id: input.invitationId },
-        data: { status: 'CANCELLED' },
+      return await db.$transaction(async (tx) => {
+        const invitation = await tx.inviteService.update({
+          where: { id: input.invitationId },
+          data: { status: 'CANCELLED' },
+          include: {
+            service: { select: { name: true, userId: true } },
+            post: { select: { title: true } },
+          },
+        });
+
+        await tx.notification.create({
+          data: {
+            message: `The client for the job post ${invitation.post.title} has cancelled their invitation on your service ${invitation.service.name}`,
+            userId: invitation.service.userId,
+          },
+        });
       });
     }),
 
