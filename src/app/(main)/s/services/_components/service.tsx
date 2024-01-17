@@ -31,6 +31,7 @@ export default function Service({
             Posted on {format(new Date(service.createdAt), 'PP')}
           </p>
         </div>
+        <p>{service.contactNumber}</p>
         <p>{service.description}</p>
         <div>
           <h2 className='text-lg font-semibold'>Category</h2>

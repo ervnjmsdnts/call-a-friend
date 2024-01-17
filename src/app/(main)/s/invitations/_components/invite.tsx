@@ -25,6 +25,7 @@ export default function Invite({
             Posted on {format(new Date(post.createdAt), 'PP')}
           </p>
         </div>
+        <p>{post.category}</p>
         <p>{post.description}</p>
 
         <div>

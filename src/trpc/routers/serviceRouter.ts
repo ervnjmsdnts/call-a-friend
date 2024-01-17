@@ -10,6 +10,7 @@ export const serviceRouter = router({
       z.object({
         name: z.string(),
         category: z.enum(jobCategories),
+        contactNumber: z.string(),
         barangay: z.string(),
         address: z.string(),
         description: z.string(),
@@ -35,6 +36,7 @@ export const serviceRouter = router({
         serviceId: z.string(),
         name: z.string(),
         category: z.enum(jobCategories),
+        contactNumber: z.string(),
         barangay: z.string(),
         address: z.string(),
         description: z.string(),
@@ -48,6 +50,7 @@ export const serviceRouter = router({
           category: input.category,
           description: input.description,
           barangay: input.barangay,
+          contactNumber: input.contactNumber,
           address: input.address,
           name: input.name,
           price: input.price,

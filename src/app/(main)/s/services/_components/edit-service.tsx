@@ -20,7 +20,7 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { Textarea } from '@/components/ui/textarea';
-import { cn, toPhp } from '@/lib/utils';
+import { calculateWage, cn, jobCategories, toPhp } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Service } from '@prisma/client';
 import { Loader2, Pencil } from 'lucide-react';
@@ -31,8 +31,9 @@ import { z } from 'zod';
 
 const schema = z.object({
   name: z.string().min(1),
-  category: z.enum(['CATERING', 'CONSTRUCTION', 'DEMOLITION']),
+  category: z.enum(jobCategories),
   barangay: z.string().min(1),
+  contactNumber: z.string(),
   address: z.string().min(1),
   description: z.string(),
   price: z.number().min(100),
@@ -50,6 +51,7 @@ export default function EditService({ service }: { service: Service }) {
     defaultValues: {
       category: service.category,
       description: service.description ?? '',
+      contactNumber: service.contactNumber ?? '',
       barangay: service.barangay,
       address: service.address,
       name: service.name,
@@ -65,8 +67,21 @@ export default function EditService({ service }: { service: Service }) {
       },
     });
 
+  const watchCategory = form.watch('category');
+  const watchPrice = form.watch('price');
+
   const submit = (data: Schema) => {
+    const minPrice = calculateWage(watchCategory);
+    if (watchPrice < minPrice) {
+      form.setError('price', {
+        type: 'min',
+        message:
+          'Price should be at least the minimum wage for the selected category',
+      });
+      return;
+    }
     updateService({ ...data, serviceId: service.id });
+    form.clearErrors();
   };
 
   return (
@@ -118,10 +133,45 @@ export default function EditService({ service }: { service: Service }) {
                           Construction
                         </SelectItem>
                         <SelectItem value='DEMOLITION'>Demolition</SelectItem>
+                        <SelectItem value='MASON'>Mason</SelectItem>
+                        <SelectItem value='LABOR'>Labor</SelectItem>
+                        <SelectItem value='HELPER'>Helper</SelectItem>
+                        <SelectItem value='WELDER'>Welder</SelectItem>
+                        <SelectItem value='ELECTRICIAN'>Electrician</SelectItem>
+                        <SelectItem value='PLUMBING'>Plumbing</SelectItem>
+                        <SelectItem value='MOTOR_MECHANIC'>
+                          Motor Mechanic
+                        </SelectItem>
+                        <SelectItem value='CAR_MECHANIC'>
+                          Car Mechanic
+                        </SelectItem>
+                        <SelectItem value='HOUSE_CLEANING'>
+                          House Cleaning
+                        </SelectItem>
+                        <SelectItem value='SLIDING_GLASS_MAKER'>
+                          Sliding Glass Maker
+                        </SelectItem>
+                        <SelectItem value='ROOF_SERVICE'>
+                          Roof Service
+                        </SelectItem>
+                        <SelectItem value='PAINT_SERVICE'>
+                          Paint Service
+                        </SelectItem>
+                        <SelectItem value='COMPUTER_TECHNICIAN'>
+                          Computer Technician
+                        </SelectItem>
                       </SelectGroup>
                     </SelectContent>
                   </Select>
                 )}
+              />
+              <Input
+                placeholder='Contact number'
+                className={cn(
+                  form.formState.errors.name &&
+                    'focus-visible:ring-red-500 focus-visible:ring-1 border-red-500',
+                )}
+                {...form.register('contactNumber')}
               />
               <Textarea
                 placeholder='Description'

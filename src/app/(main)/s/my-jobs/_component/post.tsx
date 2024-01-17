@@ -23,6 +23,7 @@ export default function Post({
         </p>
         <Badge variant='outline'>{post.status}</Badge>
       </div>
+      <p>{post.contactNumber}</p>
       <p>{post.description}</p>
       <div>
         <h2 className='text-lg font-semibold'>Location</h2>

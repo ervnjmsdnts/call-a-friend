@@ -30,6 +30,7 @@ const schema = z.object({
   name: z.string().min(1),
   category: z.enum(jobCategories),
   barangay: z.string().min(1),
+  contactNumber: z.string(),
   address: z.string().min(1),
   description: z.string(),
   price: z.number().min(1),
@@ -145,6 +146,10 @@ export default function PostServiceButton() {
                     </SelectContent>
                   </Select>
                 )}
+              />
+              <Input
+                placeholder='Contact number'
+                {...form.register('contactNumber')}
               />
               <Textarea
                 placeholder='Description'

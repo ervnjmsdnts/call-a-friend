@@ -13,6 +13,7 @@ export const jobPostRouter = router({
         address: z.string(),
         category: z.enum(jobCategories),
         description: z.string(),
+        contactNumber: z.string(),
         price: z.number(),
       }),
     )
@@ -50,6 +51,7 @@ export const jobPostRouter = router({
         category: z.enum(jobCategories),
         address: z.string(),
         description: z.string(),
+        contactNumber: z.string(),
         price: z.number(),
       }),
     )
@@ -61,6 +63,7 @@ export const jobPostRouter = router({
           price: input.price,
           description: input.description,
           title: input.title,
+          contactNumber: input.contactNumber,
           barangay: input.barangay,
           address: input.address,
         },

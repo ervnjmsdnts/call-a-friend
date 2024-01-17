@@ -74,6 +74,7 @@ model JobPost {
   address         String
   barangay        String
   description     String?
+  contactNumber   String?
   category        ServiceCategory
   acceptedService Service?        @relation(fields: [serviceId], references: [id])
   price           Float           @default(0)
@@ -123,6 +124,7 @@ model Service {
   name            String
   address         String
   barangay        String
+  contactNumber   String?
   description     String?
   price           Float           @default(0)
   category        ServiceCategory
