@@ -19,7 +19,7 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { Textarea } from '@/components/ui/textarea';
-import { cn, toPhp } from '@/lib/utils';
+import { calculateWage, cn, jobCategories, toPhp } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Plus } from 'lucide-react';
 import { useState } from 'react';
@@ -31,8 +31,8 @@ const schema = z.object({
   barangay: z.string().min(1),
   address: z.string().min(1),
   description: z.string(),
-  price: z.number().min(100),
-  category: z.enum(['CATERING', 'CONSTRUCTION', 'DEMOLITION']),
+  price: z.number().min(1),
+  category: z.enum(jobCategories),
 });
 
 type Schema = z.infer<typeof schema>;
@@ -58,8 +58,21 @@ export default function PostJobButton() {
     },
   });
 
-  const submit = (data: Schema) => {
+  const watchCategory = form.watch('category');
+  const watchPrice = form.watch('price');
+
+  const submit = async (data: Schema) => {
+    const minPrice = calculateWage(watchCategory);
+    if (watchPrice < minPrice) {
+      form.setError('price', {
+        type: 'min',
+        message:
+          'Price should be at least the minimum wage for the selected category',
+      });
+      return;
+    }
     postJob({ ...data });
+    form.clearErrors();
   };
 
   return (
@@ -108,6 +121,33 @@ export default function PostJobButton() {
                           Construction
                         </SelectItem>
                         <SelectItem value='DEMOLITION'>Demolition</SelectItem>
+                        <SelectItem value='MASON'>Mason</SelectItem>
+                        <SelectItem value='LABOR'>Labor</SelectItem>
+                        <SelectItem value='HELPER'>Helper</SelectItem>
+                        <SelectItem value='WELDER'>Welder</SelectItem>
+                        <SelectItem value='ELECTRICIAN'>Electrician</SelectItem>
+                        <SelectItem value='PLUMBING'>Plumbing</SelectItem>
+                        <SelectItem value='MOTOR_MECHANIC'>
+                          Motor Mechanic
+                        </SelectItem>
+                        <SelectItem value='CAR_MECHANIC'>
+                          Car Mechanic
+                        </SelectItem>
+                        <SelectItem value='HOUSE_CLEANING'>
+                          House Cleaning
+                        </SelectItem>
+                        <SelectItem value='SLIDING_GLASS_MAKER'>
+                          Sliding Glass Maker
+                        </SelectItem>
+                        <SelectItem value='ROOF_SERVICE'>
+                          Roof Service
+                        </SelectItem>
+                        <SelectItem value='PAINT_SERVICE'>
+                          Paint Service
+                        </SelectItem>
+                        <SelectItem value='COMPUTER_TECHNICIAN'>
+                          Computer Technician
+                        </SelectItem>
                       </SelectGroup>
                     </SelectContent>
                   </Select>
@@ -171,9 +211,11 @@ export default function PostJobButton() {
               />
             </div>
             <div className='grid gap-2'>
-              <h3 className='font-semibold'>Price (Mimimum of {toPhp(100)})</h3>
+              <h3 className='font-semibold'>
+                Price (Mimimum of {toPhp(calculateWage(watchCategory))})
+              </h3>
               <Input
-                placeholder='100'
+                placeholder={calculateWage(watchCategory).toString()}
                 className={cn(
                   form.formState.errors.price &&
                     'focus-visible:ring-red-500 focus-visible:ring-1 border-red-500',

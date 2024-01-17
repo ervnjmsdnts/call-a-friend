@@ -1,4 +1,5 @@
 import { db } from '@/db';
+import { jobCategories } from '@/lib/utils';
 import { privateProcedure, publicProcedure, router } from '@/trpc/trpc';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
@@ -10,7 +11,7 @@ export const jobPostRouter = router({
         title: z.string(),
         barangay: z.string(),
         address: z.string(),
-        category: z.enum(['CATERING', 'CONSTRUCTION', 'DEMOLITION']),
+        category: z.enum(jobCategories),
         description: z.string(),
         price: z.number(),
       }),
@@ -46,7 +47,7 @@ export const jobPostRouter = router({
         postId: z.string(),
         title: z.string(),
         barangay: z.string(),
-        category: z.enum(['CATERING', 'CONSTRUCTION', 'DEMOLITION']),
+        category: z.enum(jobCategories),
         address: z.string(),
         description: z.string(),
         price: z.number(),

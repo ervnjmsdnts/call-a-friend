@@ -2,13 +2,14 @@ import { z } from 'zod';
 import { privateProcedure, publicProcedure, router } from '../trpc';
 import { db } from '@/db';
 import { TRPCError } from '@trpc/server';
+import { jobCategories } from '@/lib/utils';
 
 export const serviceRouter = router({
   postService: privateProcedure
     .input(
       z.object({
         name: z.string(),
-        category: z.enum(['CATERING', 'CONSTRUCTION', 'DEMOLITION']),
+        category: z.enum(jobCategories),
         barangay: z.string(),
         address: z.string(),
         description: z.string(),
@@ -33,7 +34,7 @@ export const serviceRouter = router({
       z.object({
         serviceId: z.string(),
         name: z.string(),
-        category: z.enum(['CATERING', 'CONSTRUCTION', 'DEMOLITION']),
+        category: z.enum(jobCategories),
         barangay: z.string(),
         address: z.string(),
         description: z.string(),
