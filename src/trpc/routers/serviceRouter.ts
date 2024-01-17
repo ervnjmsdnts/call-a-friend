@@ -71,7 +71,7 @@ export const serviceRouter = router({
     const services = await db.service.findMany({
       where: { isActive: true },
       orderBy: { createdAt: 'desc' },
-      include: { user: true },
+      include: { user: true, ratings: true },
     });
 
     return services;

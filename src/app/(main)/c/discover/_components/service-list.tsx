@@ -14,24 +14,24 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { jobCategories, toTitleCase } from '@/lib/utils';
-import { format } from 'date-fns';
-import { Ghost, Loader2 } from 'lucide-react';
+import { Ghost, Loader2, Star } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 
-export default function JobsList() {
-  const { data: posts, isLoading } = trpc.clients.jobPost.getAll.useQuery();
+export default function ServiceList() {
+  const { data: services, isLoading } = trpc.services.getAll.useQuery();
+
   const [searchUser, setSearchUser] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<
     (typeof jobCategories)[number] | undefined
   >(undefined);
 
-  const filteredPosts = posts?.filter((post) => {
+  const filteredServices = services?.filter((service) => {
     const categoryMatch =
-      !selectedCategory || post.category === selectedCategory;
+      !selectedCategory || service.category === selectedCategory;
     const userMatch =
       !searchUser ||
-      post.user.name.toLowerCase().includes(searchUser.toLowerCase());
+      service.user.name.toLowerCase().includes(searchUser.toLowerCase());
 
     return selectedCategory && searchUser
       ? categoryMatch && userMatch
@@ -47,7 +47,7 @@ export default function JobsList() {
       <div className='flex justify-end'>
         <div className='flex items-center gap-1'>
           <Input
-            placeholder='Search client'
+            placeholder='Search provider'
             onChange={(e) => setSearchUser(e.target.value)}
             value={searchUser}
           />
@@ -87,33 +87,51 @@ export default function JobsList() {
           </Select>
         </div>
       </div>
-      {filteredPosts && filteredPosts.length > 0 ? (
+      {filteredServices && filteredServices.length > 0 ? (
         <div className='flex flex-col gap-3 mt-4 w-full'>
-          {filteredPosts.map((post) => (
-            <div key={post.id} className='border rounded-lg p-4'>
-              <div className='space-y-4'>
-                <div>
-                  <div className='flex items-center justify-between'>
-                    <h2 className='text-lg font-semibold'>{post.title}</h2>
-                    <Badge variant='secondary'>
-                      {toTitleCase(post.category)}
-                    </Badge>
+          {filteredServices.map((service) => {
+            const totalRating = service.ratings.reduce(
+              (sum, rating) => sum + rating.rating,
+              0,
+            );
+            const averageRating = totalRating / service.ratings.length;
+            const maxRating = Math.min(averageRating, 5) || 0;
+
+            return (
+              <div key={service.id} className='border rounded-lg p-4'>
+                <div className='space-y-4'>
+                  <div className='flex items-start justify-between'>
+                    <div>
+                      <h2 className='text-lg font-semibold'>{service.name}</h2>
+                      <p className='text-sm text-muted-foreground'>
+                        {service.user.name}
+                      </p>
+                    </div>
+                    <div>
+                      <div className='flex items-center justify-end gap-1'>
+                        <Star className='fill-yellow-400 w-4 h-4 stroke-yellow-400' />
+                        <p className='text-sm'>{maxRating}</p>
+                      </div>
+                    </div>
                   </div>
-                  <p className='text-sm text-muted-foreground'>
-                    {post.user.name}
-                  </p>
-                  <p className='text-sm text-muted-foreground'>
-                    {format(new Date(post.createdAt), 'PPp')}
-                  </p>
-                </div>
-                <div className='flex justify-end'>
-                  <Button asChild>
-                    <Link href={`/s/discover/${post.id}`}>Apply Now</Link>
-                  </Button>
+                  {service.description ? (
+                    <p className='text-sm'>{service.description}</p>
+                  ) : null}
+
+                  <div className='flex justify-between items-center'>
+                    <Badge variant='secondary'>
+                      {toTitleCase(service.category)}
+                    </Badge>
+                    <Button asChild>
+                      <Link href={`/c/discover/${service.id}`}>
+                        View Details
+                      </Link>
+                    </Button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       ) : isLoading ? (
         <div className='flex justify-center pt-12'>
@@ -122,7 +140,7 @@ export default function JobsList() {
       ) : (
         <div className='flex flex-col pt-12 gap-1 items-center'>
           <Ghost className='text-muted-foreground' />
-          <p className='font-medium text-muted-foreground'>No posts</p>
+          <p className='font-medium text-muted-foreground'>No services</p>
         </div>
       )}
     </div>
