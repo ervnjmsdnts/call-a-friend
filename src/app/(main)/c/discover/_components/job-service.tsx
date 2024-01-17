@@ -27,6 +27,7 @@ import { Star } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
+import CreatePostSheet from './create-post-sheet';
 
 const schema = z.object({
   postId: z.string().min(1),
@@ -158,35 +159,38 @@ export default function JobService({
             className='flex flex-col h-full'>
             <h3 className='font-semibold text-lg mb-4'>Invite Service</h3>
             <div className='flex-1 flex flex-col gap-2'>
-              <Controller
-                control={form.control}
-                name='postId'
-                render={({ field }) => (
-                  <Select
-                    disabled={isLoading}
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}>
-                    <SelectTrigger
-                      className={cn(
-                        form.formState.errors.postId &&
-                          'focus-visible:ring-red-500 focus-visible:ring-1 border-red-500',
-                        field.value ? 'text-black' : 'text-muted-foreground',
-                      )}>
-                      <SelectValue placeholder='Select post' />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectLabel>My Posts</SelectLabel>
-                        {myPosts?.map((post) => (
-                          <SelectItem key={post.id} value={post.id}>
-                            {post.title}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                )}
-              />
+              <div className='flex gap-1'>
+                <Controller
+                  control={form.control}
+                  name='postId'
+                  render={({ field }) => (
+                    <Select
+                      disabled={isLoading}
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}>
+                      <SelectTrigger
+                        className={cn(
+                          form.formState.errors.postId &&
+                            'focus-visible:ring-red-500 focus-visible:ring-1 border-red-500',
+                          field.value ? 'text-black' : 'text-muted-foreground',
+                        )}>
+                        <SelectValue placeholder='Select post' />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectLabel>My Posts</SelectLabel>
+                          {myPosts?.map((post) => (
+                            <SelectItem key={post.id} value={post.id}>
+                              {post.title}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+                <CreatePostSheet />
+              </div>
               <Textarea
                 placeholder='Message'
                 className='h-24'
