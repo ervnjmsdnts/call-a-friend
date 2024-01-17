@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Sheet, SheetContent, SheetTrigger } from './ui/sheet';
 import {
+  Award,
   Bell,
   BookCopy,
   FileBadge,
@@ -83,6 +84,12 @@ const routes: {
     Icon: FileSearch,
     label: 'My Applications',
     role: ['SERVICE'],
+  },
+  {
+    href: '/my-ratings',
+    Icon: Award,
+    label: 'My Ratings',
+    role: ['CLIENT'],
   },
 ];
 
