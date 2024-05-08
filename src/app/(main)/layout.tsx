@@ -15,7 +15,7 @@ export default async function MainLayout({ children }: PropsWithChildren) {
 
   if (!user || !user.id) return redirect('/auth');
 
-  const dbUser = await db.user.findFirst({ where: { id: user.id } });
+  const dbUser = await db.user.findUnique({ where: { id: user.id } });
 
   if (!dbUser || !dbUser.id || !dbUser.name) return redirect('/auth');
 
